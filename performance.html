@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hiệu suất - Getfly Insights</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary": "#314367", "tertiary-container": "#485b80", "error-container": "#ffdad6", "error": "#ba1a1a", "on-surface": "#191c1e", "primary-container": "#0052cc", "outline": "#737685", "surface-container-low": "#f3f4f6", "secondary": "#006e2c", "secondary-container": "#86f898", "surface": "#f8f9fb", "surface-container-lowest": "#ffffff", "primary": "#003d9b" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] } } } }
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #f8f9fb; min-height: max(884px, 100dvh); }
+h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
+</head>
+<body class="text-on-surface pb-24">
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-sm flex justify-between items-center px-6 py-3 w-full">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-container flex items-center justify-center text-white font-bold text-xs">JD</div>
+<h1 class="font-manrope font-extrabold text-blue-800 text-lg leading-tight">Getfly Insights</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100/50 transition-all"><span class="material-symbols-outlined text-slate-500">calendar_today</span></button>
+</div>
+</header>
+<main class="pt-20 px-4 md:px-8 mx-auto">
+<section class="mb-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div><h2 class="text-2xl font-bold font-headline text-on-surface">Hiệu suất &amp; Cam kết</h2><p class="text-outline font-body text-sm">Theo dõi tiến độ thực tế.</p></div>
+<div class="flex items-center gap-2 p-1.5 bg-surface-container-low rounded-full">
+<button class="px-4 py-1.5 rounded-full text-xs font-medium bg-surface-container-lowest text-primary shadow-sm">Tháng này</button>
+<button class="px-4 py-1.5 rounded-full text-xs font-medium text-outline hover:bg-surface-container-lowest transition-colors">Quý này</button>
+</div>
+</div>
+</section>
+
+<div class="grid grid-cols-1 md:grid-cols-12 gap-6 mb-8">
+<div class="md:col-span-8 bg-surface-container-lowest rounded-xl p-6 relative overflow-hidden flex flex-col justify-between min-h-[320px]">
+<div class="relative z-10">
+<div class="flex justify-between items-start mb-4"><span class="text-tertiary font-headline font-semibold text-sm uppercase tracking-wider">Doanh thu so với Cam kết</span></div>
+<div class="flex items-baseline gap-2"><span class="text-4xl md:text-5xl font-extrabold font-headline text-primary" id="actualRevue">1.25B</span><span class="text-outline font-body text-lg">/ <span id="targetRevue">1.50B</span> VNĐ</span></div>
+</div>
+<div class="mt-8 flex items-end gap-3 h-32 relative">
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[40%]"><div class="w-full bg-primary-container rounded-t-lg h-[100%]"></div></div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[60%]"><div class="w-full bg-primary-container rounded-t-lg h-[90%]"></div></div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[50%]"><div class="w-full bg-primary-container rounded-t-lg h-[100%]"></div></div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[80%]"><div class="w-full bg-primary-container rounded-t-lg h-[75%]"></div></div>
+<div class="flex-1 bg-surface-container-low rounded-t-lg h-[70%]"><div class="w-full bg-primary-container rounded-t-lg h-[110%]"></div></div>
+<div class="absolute top-1/4 left-0 w-full border-t-2 border-dashed border-secondary/30 pointer-events-none"><span class="absolute -top-5 right-0 text-[10px] font-bold text-secondary">Mục tiêu trung bình</span></div>
+</div>
+</div>
+
+<div class="md:col-span-4 bg-surface-container-lowest rounded-xl p-6 flex flex-col justify-between">
+<div><h3 class="font-headline font-semibold text-tertiary text-sm mb-6">Tỉ lệ Hoàn thành Kế hoạch</h3>
+<div class="relative w-32 h-32 mx-auto">
+<svg class="w-full h-full" viewbox="0 0 36 36"><path class="text-surface-container-low stroke-current" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-width="3"></path><path class="text-secondary stroke-current" id="svgCircle" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" fill="none" stroke-dasharray="83, 100" stroke-linecap="round" stroke-width="3"></path></svg>
+<div class="absolute inset-0 flex flex-col items-center justify-center"><span class="text-2xl font-extrabold font-headline text-on-surface" id="percentText">83%</span></div>
+</div></div>
+</div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+<div class="bg-surface-container-lowest rounded-xl p-6">
+<h3 class="font-headline font-semibold text-on-surface mb-6">Số lượng Demo &amp; Mục tiêu</h3>
+<div class="space-y-6">
+<div class="flex items-center gap-4"><div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-primary"><span class="material-symbols-outlined">groups</span></div><div class="flex-1"><div class="flex justify-between mb-1"><span class="text-sm font-semibold text-on-surface">Demo mới tuần này</span><span class="text-sm font-bold text-primary" id="demoValue">42 / 50</span></div><div class="w-full bg-surface-container-low h-2 rounded-full overflow-hidden"><div class="bg-primary h-full" id="demoBar" style="width: 84%"></div></div></div></div>
+</div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-xl p-6">
+<h3 class="font-headline font-semibold text-on-surface mb-6">Điều chỉnh Cam kết</h3>
+<div class="space-y-5">
+<form onsubmit="handleUpdateGoal(event)">
+<div><label class="block text-xs font-bold text-outline uppercase mb-2">Doanh thu cam kết (VNĐ)</label>
+<div class="flex items-center gap-3"><input type="number" id="inputRevue" class="flex-1 bg-surface-container-low border-none rounded-xl px-4 py-3 font-headline font-bold text-on-surface focus:ring-2 focus:ring-primary/20" value="1500000000"/></div>
+</div>
+<div class="grid grid-cols-2 gap-4 mt-4">
+<div><label class="block text-xs font-bold text-outline uppercase mb-2">Demo Mục tiêu</label><input type="number" id="inputDemo" class="w-full bg-surface-container-low border-none rounded-xl px-4 py-3 font-bold text-on-surface" value="50"/></div>
+</div>
+<button type="submit" class="w-full py-4 bg-primary text-white font-headline font-bold rounded-full mt-6 shadow-lg shadow-primary/20 hover:bg-blue-800 transition-all">Cập nhật chỉ tiêu</button>
+</form>
+</div>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full h-16 bg-white/80 backdrop-blur-lg flex justify-around items-center px-4 pb-safe z-50 rounded-t-xl shadow-[0px_-4px_12px_rgba(0,0,0,0.02)]">
+<a href="dashboard.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">dashboard</span><span class="font-inter text-[10px] font-medium tracking-tight">Overview</span></a>
+<a href="leads.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">leaderboard</span><span class="font-inter text-[10px] font-medium tracking-tight">Leads</span></a>
+<a href="performance.html" class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-xl px-3 py-1"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">analytics</span><span class="font-inter text-[10px] font-medium tracking-tight">Performance</span></a>
+<a href="orders.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">receipt_long</span><span class="font-inter text-[10px] font-medium tracking-tight">Orders</span></a>
+</nav>
+<script>
+    function handleUpdateGoal(e) {
+        e.preventDefault();
+        const goal = document.getElementById('inputRevue').value;
+        const demoGoal = document.getElementById('inputDemo').value;
+        
+        // Mock current actual values
+        const actualRevue = 1250000000;
+        const actualDemo = 42;
+        
+        const percent = Math.round((actualRevue / goal) * 100);
+        document.getElementById('percentText').innerText = percent + "%";
+        document.getElementById('svgCircle').setAttribute('stroke-dasharray', `${percent}, 100`);
+        document.getElementById('targetRevue').innerText = (goal / 1000000000).toFixed(2) + "B";
+        
+        const demoPercent = Math.round((actualDemo / demoGoal) * 100);
+        document.getElementById('demoValue').innerText = `${actualDemo} / ${demoGoal}`;
+        document.getElementById('demoBar').style.width = demoPercent + "%";
+        
+        alert("Đã cập nhật mục tiêu cam kết và bảng tính toán thành công!");
+    }
+</script>
+</body></html>

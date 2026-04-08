@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Chi tiết Đơn hàng - Getfly Insights</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary": "#314367", "tertiary-container": "#485b80", "error-container": "#ffdad6", "error": "#ba1a1a", "on-surface": "#191c1e", "primary-container": "#0052cc", "outline": "#737685", "surface-container-low": "#f3f4f6", "secondary": "#006e2c", "secondary-container": "#86f898", "surface": "#f8f9fb", "surface-container-lowest": "#ffffff", "primary": "#003d9b" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] } } } }
+</script>
+<style>
+body { font-family: 'Inter', sans-serif; background-color: #f8f9fb; min-height: max(884px, 100dvh); }
+h1, h2, h3 { font-family: 'Manrope', sans-serif; }
+.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+</style>
+</head>
+<body class="text-on-surface antialiased pb-24">
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-sm flex justify-between items-center px-6 py-3 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden"><span class="material-symbols-outlined text-primary">person</span></div>
+<h1 class="font-manrope font-extrabold text-blue-800 text-lg">Getfly Insights</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100/50 transition-all"><span class="material-symbols-outlined text-slate-500">calendar_today</span></button>
+</div>
+</header>
+
+<main class="mt-20 px-4 md:px-8 mx-auto">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+<div><span class="text-primary font-semibold text-sm tracking-wider uppercase">Báo cáo quản trị</span><h2 class="font-manrope font-bold text-3xl text-on-surface mt-1">Chi tiết Đơn hàng</h2></div>
+<div class="flex items-center p-1 bg-surface-container-low rounded-full w-fit">
+<select id="filter-year" class="px-3 py-2 rounded-full text-sm font-semibold bg-white shadow-sm text-primary border-0 focus:ring-0"></select>
+<select id="filter-month" class="px-3 py-2 rounded-full text-sm font-semibold bg-white shadow-sm text-primary border-0 focus:ring-0"></select>
+<select id="filter-day" class="px-3 py-2 rounded-full text-sm font-semibold bg-white shadow-sm text-primary border-0 focus:ring-0"></select>
+</div>
+</div>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm"><p class="text-outline text-xs font-semibold uppercase tracking-tight mb-2">Tổng giá trị</p><p id="val-totalOrderValue" class="font-manrope font-bold text-2xl text-on-surface">0 đ</p></div>
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm"><p class="text-outline text-xs font-semibold uppercase tracking-tight mb-2">Số đơn hàng</p><p id="val-ordersCompleted" class="font-manrope font-bold text-2xl text-on-surface">0</p></div>
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm border-l-4 border-secondary"><p class="text-outline text-xs font-semibold uppercase tracking-tight mb-2">Đã thanh toán</p><p id="val-paidRevenue" class="font-manrope font-bold text-2xl text-secondary">0 đ</p></div>
+<div class="p-5 rounded-xl bg-surface-container-lowest shadow-sm border-l-4 border-primary"><p class="text-outline text-xs font-semibold uppercase tracking-tight mb-2">Chờ xử lý</p><p id="val-pendingRevenue" class="font-manrope font-bold text-2xl text-primary">0 đ</p></div>
+</div>
+
+<div class="bg-surface-container-lowest rounded-2xl overflow-hidden shadow-sm">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-separate border-spacing-0">
+<thead>
+<tr class="bg-surface-container-low">
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-outline">Khách hàng / Mã đơn</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-outline">Nhân sự phụ trách</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-outline text-right">Giá trị</th>
+<th class="px-6 py-4 text-xs font-bold uppercase tracking-wider text-outline text-center">Trạng thái</th>
+</tr>
+</thead>
+<tbody id="orders-table-body" class="divide-y divide-surface-container">
+<tr class="hover:bg-surface transition-colors">
+<td class="px-6 py-5"><div class="font-semibold text-on-surface">Chưa có dữ liệu</div><div class="text-xs text-outline">-</div></td>
+<td class="px-6 py-5"><span class="text-sm font-medium text-tertiary">-</span></td>
+<td class="px-6 py-5 text-right font-manrope font-bold text-on-surface">0</td>
+<td class="px-6 py-5 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-primary-container/20 text-primary">Đang chờ</span></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<nav class="fixed bottom-0 left-0 w-full h-16 bg-white/80 backdrop-blur-lg flex justify-around items-center px-4 pb-safe z-50 rounded-t-xl shadow-[0px_-4px_12px_rgba(0,0,0,0.02)]">
+<a href="dashboard.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">dashboard</span><span class="font-inter text-[10px] font-medium tracking-tight">Overview</span></a>
+<a href="leads.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">leaderboard</span><span class="font-inter text-[10px] font-medium tracking-tight">Leads</span></a>
+<a href="performance.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">analytics</span><span class="font-inter text-[10px] font-medium tracking-tight">Performance</span></a>
+<a href="orders.html" class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-xl px-3 py-1"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span><span class="font-inter text-[10px] font-medium tracking-tight">Orders</span></a>
+</nav>
+<script src="data.js"></script>
+<script>
+	function getFilteredOrderRecords(report, year, month, day) {
+		const records = report.years[String(year)]?.records?.orders || [];
+		return records.filter((item) => {
+			const monthOk = month === 'all' || item.month === Number(month);
+			const dayOk = day === 'all' || item.day === Number(day);
+			return monthOk && dayOk;
+		});
+	}
+
+	function toDateKey(record) {
+		return (record.year || 0) * 10000 + (record.month || 0) * 100 + (record.day || 0);
+	}
+
+	if (typeof GETFLY_DATA !== 'undefined') {
+		const moneyFmt = new Intl.NumberFormat('vi-VN');
+		const filterYearEl = document.getElementById('filter-year');
+		const filterMonthEl = document.getElementById('filter-month');
+		const filterDayEl = document.getElementById('filter-day');
+
+		const totalOrderValueEl = document.getElementById('val-totalOrderValue');
+		const ordersCompletedEl = document.getElementById('val-ordersCompleted');
+		const paidRevenueEl = document.getElementById('val-paidRevenue');
+		const pendingRevenueEl = document.getElementById('val-pendingRevenue');
+		const ordersTableBodyEl = document.getElementById('orders-table-body');
+
+		const years = Object.keys(GETFLY_REPORT.years).sort((a, b) => Number(b) - Number(a));
+		filterYearEl.innerHTML = years.map((year) => `<option value="${year}">Năm ${year}</option>`).join('');
+		filterMonthEl.innerHTML = '<option value="all">Tất cả tháng</option>' + Array.from({ length: 12 }, (_, idx) => `<option value="${idx + 1}">Tháng ${idx + 1}</option>`).join('');
+		filterDayEl.innerHTML = '<option value="all">Tất cả ngày</option>' + Array.from({ length: 31 }, (_, idx) => `<option value="${idx + 1}">Ngày ${idx + 1}</option>`).join('');
+
+		filterYearEl.value = String(GETFLY_REPORT.current.year);
+		filterMonthEl.value = String(GETFLY_REPORT.current.month);
+		filterDayEl.value = 'all';
+
+		function renderOrders() {
+			const orders = getFilteredOrderRecords(GETFLY_REPORT, filterYearEl.value, filterMonthEl.value, filterDayEl.value)
+				.sort((a, b) => toDateKey(b) - toDateKey(a));
+
+			const totalRevenue = orders.reduce((sum, item) => sum + Number(item.revenue || 0), 0);
+			const paidRevenue = orders.reduce((sum, item) => sum + Number(item.paid || 0), 0);
+			const pendingRevenue = orders.reduce((sum, item) => sum + Number(item.pending || 0), 0);
+			const ordersCompleted = orders.filter((item) => String(item.status || '').toLowerCase().includes('đã duyệt')).length;
+
+			if (totalOrderValueEl) totalOrderValueEl.innerText = `${moneyFmt.format(totalRevenue)} đ`;
+			if (ordersCompletedEl) ordersCompletedEl.innerText = moneyFmt.format(ordersCompleted);
+			if (paidRevenueEl) paidRevenueEl.innerText = `${moneyFmt.format(paidRevenue)} đ`;
+			if (pendingRevenueEl) pendingRevenueEl.innerText = `${moneyFmt.format(pendingRevenue)} đ`;
+
+			if (!ordersTableBodyEl) return;
+
+			const recentOrders = orders.slice(0, 10);
+			if (!recentOrders.length) {
+				ordersTableBodyEl.innerHTML = `
+					<tr class="hover:bg-surface transition-colors">
+						<td class="px-6 py-5"><div class="font-semibold text-on-surface">Chưa có dữ liệu</div><div class="text-xs text-outline">-</div></td>
+						<td class="px-6 py-5"><span class="text-sm font-medium text-tertiary">-</span></td>
+						<td class="px-6 py-5 text-right font-manrope font-bold text-on-surface">0</td>
+						<td class="px-6 py-5 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide bg-primary-container/20 text-primary">Đang chờ</span></td>
+					</tr>
+				`;
+			} else {
+				ordersTableBodyEl.innerHTML = recentOrders.map((order, index) => {
+					const rowClass = index % 2 === 1 ? 'bg-surface-container-low/30 hover:bg-surface transition-colors' : 'hover:bg-surface transition-colors';
+					const status = String(order.status || '').toLowerCase();
+					const statusClass = status.includes('duyệt')
+						? 'bg-secondary-container text-on-secondary-container'
+						: (status.includes('huỷ') || status.includes('huy'))
+							? 'bg-error-container text-on-error-container'
+							: 'bg-primary-container/20 text-primary';
+
+					return `
+						<tr class="${rowClass}">
+							<td class="px-6 py-5"><div class="font-semibold text-on-surface">${order.customer}</div><div class="text-xs text-outline">${order.code}</div></td>
+							<td class="px-6 py-5"><span class="text-sm font-medium text-tertiary">${order.owner}</span></td>
+							<td class="px-6 py-5 text-right font-manrope font-bold text-on-surface">${moneyFmt.format(order.revenue || 0)}</td>
+							<td class="px-6 py-5 text-center"><span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide ${statusClass}">${order.status}</span></td>
+						</tr>
+					`;
+				}).join('');
+			}
+		}
+
+		filterYearEl.addEventListener('change', renderOrders);
+		filterMonthEl.addEventListener('change', renderOrders);
+		filterDayEl.addEventListener('change', renderOrders);
+		renderOrders();
+	}
+</script>
+</body></html>

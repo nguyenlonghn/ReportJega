@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="vi" class="light">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập - Getfly Insights</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { colors: { primary: "#003d9b", "primary-container": "#0052cc", "on-surface": "#191c1e", background: "#f8f9fb", surface: "#ffffff", outline: "#737685" }, fontFamily: { headline: ["Manrope"], body: ["Inter"] } } } }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8f9fb; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="bg-surface w-full max-w-md rounded-3xl shadow-xl overflow-hidden p-8 border border-slate-100">
+        <div class="flex justify-center mb-8">
+            <div class="w-16 h-16 bg-blue-50 rounded-2xl flex items-center justify-center text-primary">
+                <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">analytics</span>
+            </div>
+        </div>
+        
+        <div class="text-center mb-8">
+            <h1 class="font-manrope font-extrabold text-2xl text-primary mb-2">Getfly Insights</h1>
+            <p class="text-outline text-sm">Đăng nhập tài khoản Getfly để cào và đồng bộ dữ liệu thời gian thực.</p>
+        </div>
+
+        <div id="errorBox" class="hidden mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-sm font-semibold text-center"></div>
+
+        <form onsubmit="handleLogin(event)" class="space-y-5">
+            <input type="hidden" id="domain" value="jega">
+            <input type="hidden" id="username" value="hangvt@jega.asia">
+            <input type="hidden" id="password" value="Hangvu2416,">
+
+            <button type="submit" id="loginBtn" class="w-full bg-primary hover:bg-blue-800 text-white font-manrope font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-2 mt-4">
+                <span id="btnText">Khởi động Tiến trình Đồng bộ</span>
+                <span class="material-symbols-outlined text-sm" id="btnIcon">cloud_sync</span>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn');
+            const errBox = document.getElementById('errorBox');
+            
+            document.getElementById('btnText').innerText = 'Backend đang cào dữ liệu (Vui lòng chờ 30-60s)...';
+            document.getElementById('btnIcon').innerText = 'refresh';
+            document.getElementById('btnIcon').classList.add('animate-spin');
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+            errBox.classList.add('hidden');
+            
+            const domain = document.getElementById('domain').value;
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                // Gọi API backend NodeJS nội bộ
+                const res = await fetch('http://localhost:3001/api/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ domain, username, password })
+                });
+
+                const json = await res.json();
+                
+                if (json.success) {
+                    window.location.href = 'dashboard.html';
+                } else {
+                    throw new Error(json.message || "Lỗi cào dữ liệu từ Server local");
+                }
+            } catch (err) {
+                errBox.innerText = err.message;
+                errBox.classList.remove('hidden');
+                
+                document.getElementById('btnText').innerText = 'Thử lại lần nữa';
+                document.getElementById('btnIcon').innerText = 'error';
+                document.getElementById('btnIcon').classList.remove('animate-spin');
+                btn.classList.remove('opacity-80', 'cursor-not-allowed');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html class="light" lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Getfly Insights - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Manrope:wght@600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = { darkMode: "class", theme: { extend: { colors: { "tertiary": "#314367", "surface-variant": "#e1e2e4", "outline-variant": "#c3c6d6", "tertiary-container": "#485b80", "error-container": "#ffdad6", "error": "#ba1a1a", "on-surface": "#191c1e", "primary-container": "#0052cc", "outline": "#737685", "surface-container-low": "#f3f4f6", "on-error": "#ffffff", "on-primary": "#ffffff", "secondary": "#006e2c", "secondary-container": "#86f898", "surface-container-highest": "#e1e2e4", "on-surface-variant": "#434654", "surface": "#f8f9fb", "on-background": "#191c1e", "surface-container": "#edeef0", "surface-container-lowest": "#ffffff", "primary": "#003d9b", "surface-container-high": "#e7e8ea", "background": "#f8f9fb" }, borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" }, fontFamily: { "headline": ["Manrope"], "body": ["Inter"], "label": ["Inter"] } } } }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+        body { min-height: max(884px, 100dvh); }
+    </style>
+</head>
+<body class="bg-background text-on-surface min-h-screen pb-20">
+<!-- TopAppBar -->
+<header class="fixed top-0 w-full z-50 bg-white/80 backdrop-blur-lg shadow-sm flex justify-between items-center px-6 py-3 w-full">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center overflow-hidden border border-outline-variant/10">
+<span class="material-symbols-outlined text-primary">person</span>
+</div>
+<h1 class="font-manrope font-extrabold text-blue-800 text-lg">Getfly Insights</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-slate-100/50 transition-all duration-300 ease-in-out text-slate-500">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+</button>
+</div>
+</header>
+<main class="pt-20 px-4 space-y-6">
+<!-- Dashboard Header & Time Selection -->
+<section class="space-y-4">
+<div class="flex flex-col gap-1">
+<h2 class="font-manrope font-semibold text-2xl text-on-surface">Tổng quan Getfly</h2>
+<p class="text-outline text-sm font-body">Báo cáo hiệu suất vận hành thời gian thực</p>
+</div>
+<div class="flex p-1 bg-surface-container-low rounded-full w-fit">
+<select id="filter-year" class="px-3 py-2 rounded-full text-sm font-medium bg-surface-container-lowest text-primary shadow-sm border-0 focus:ring-0"></select>
+<select id="filter-month" class="px-3 py-2 rounded-full text-sm font-medium bg-surface-container-lowest text-primary shadow-sm border-0 focus:ring-0"></select>
+<select id="filter-day" class="px-3 py-2 rounded-full text-sm font-medium bg-surface-container-lowest text-primary shadow-sm border-0 focus:ring-0"></select>
+</div>
+</section>
+<!-- KPI Cards Bento Grid -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="p-2 bg-blue-50 text-primary rounded-lg"><span class="material-symbols-outlined">leaderboard</span></span>
+<div class="flex items-center text-secondary text-xs font-bold bg-secondary-container/20 px-2 py-1 rounded-full"><span class="material-symbols-outlined text-sm mr-1">trending_up</span>12%</div>
+</div>
+<div class="mt-8">
+<p class="text-tertiary text-xs font-medium uppercase tracking-wider">Tổng Lead</p>
+<p id="val-totalLeads" class="font-manrope font-extrabold text-3xl text-on-surface mt-1">1,284</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="p-2 bg-emerald-50 text-secondary rounded-lg"><span class="material-symbols-outlined">payments</span></span>
+<div class="flex items-center text-secondary text-xs font-bold bg-secondary-container/20 px-2 py-1 rounded-full"><span class="material-symbols-outlined text-sm mr-1">trending_up</span>8.5%</div>
+</div>
+<div class="mt-8">
+<p class="text-tertiary text-xs font-medium uppercase tracking-wider">Tổng Doanh thu</p>
+<p id="val-totalRevenue" class="font-manrope font-extrabold text-3xl text-on-surface mt-1">428.5M</p>
+</div>
+</div>
+<div class="bg-surface-container-lowest p-5 rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.02)] relative overflow-hidden group">
+<div class="flex justify-between items-start">
+<span class="p-2 bg-purple-50 text-tertiary-container rounded-lg"><span class="material-symbols-outlined">ads_click</span></span>
+<div class="flex items-center text-error text-xs font-bold bg-error-container/30 px-2 py-1 rounded-full"><span class="material-symbols-outlined text-sm mr-1">trending_down</span>2%</div>
+</div>
+<div class="mt-8">
+<p class="text-tertiary text-xs font-medium uppercase tracking-wider">Tỉ lệ chuyển đổi</p>
+<p id="val-conversionRate" class="font-manrope font-extrabold text-3xl text-on-surface mt-1">24.8%</p>
+</div>
+</div>
+</section>
+<!-- Charts Section -->
+<section class="bg-surface-container-lowest p-6 rounded-xl shadow-[0px_4px_12px_rgba(0,0,0,0.02)]">
+<div class="flex justify-between items-center mb-8">
+<div>
+<h3 class="font-manrope font-bold text-lg text-on-surface">So sánh Doanh thu</h3>
+<p class="text-outline text-xs">Tuần này vs Tuần trước</p>
+</div>
+<div class="text-[11px] text-outline">Đơn vị: VNĐ</div>
+</div>
+<!-- Simplified Bar Chart -->
+<div class="h-72">
+<canvas id="weekly-revenue-chart-canvas"></canvas>
+</div>
+<p id="weekly-revenue-caption" class="mt-3 text-[11px] text-outline">So sánh theo tuần gần nhất có dữ liệu</p>
+</div>
+</section>
+<!-- Secondary Section: Recent Activity -->
+<section class="space-y-4">
+<h3 class="font-manrope font-bold text-lg text-on-surface">Đơn hàng mới nhất</h3>
+<div id="recent-orders-list" class="space-y-3">
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-primary"><span class="material-symbols-outlined">history</span></div>
+<div><p class="text-sm font-semibold text-on-surface">Chưa có đơn hàng</p><p class="text-xs text-outline">Dữ liệu sẽ cập nhật khi có báo cáo</p></div>
+</div>
+<div class="text-right"><p class="text-sm font-bold text-primary">0 đ</p><p class="text-[10px] text-outline">-</p></div>
+</div>
+</div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav class="fixed bottom-0 left-0 w-full h-16 bg-white/80 backdrop-blur-lg flex justify-around items-center px-4 pb-safe shadow-[0px_-4px_12px_rgba(0,0,0,0.02)] z-50 rounded-t-xl hover:cursor-pointer">
+<a href="dashboard.html" class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-xl px-3 py-1">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-inter text-[10px] font-medium tracking-tight">Overview</span>
+</a>
+<a href="leads.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">leaderboard</span>
+<span class="font-inter text-[10px] font-medium tracking-tight">Leads</span>
+</a>
+<a href="performance.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">analytics</span>
+<span class="font-inter text-[10px] font-medium tracking-tight">Performance</span>
+</a>
+<a href="orders.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-inter text-[10px] font-medium tracking-tight">Orders</span>
+</a>
+</nav>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="data.js"></script>
+<script>
+    function toDateKey(record) {
+        return (record.year || 0) * 10000 + (record.month || 0) * 100 + (record.day || 0);
+    }
+
+    function formatMoneyShort(value) {
+        return `${(Number(value || 0) / 1000000).toFixed(1)}M`;
+    }
+
+    function getFilteredRecords(report, year, month, day) {
+        const yearData = report.years[String(year)] || { records: { leads: [], orders: [] } };
+        const leads = (yearData.records?.leads || []).filter((item) => {
+            const monthOk = month === 'all' || item.month === Number(month);
+            const dayOk = day === 'all' || item.day === Number(day);
+            return monthOk && dayOk;
+        });
+        const orders = (yearData.records?.orders || []).filter((item) => {
+            const monthOk = month === 'all' || item.month === Number(month);
+            const dayOk = day === 'all' || item.day === Number(day);
+            return monthOk && dayOk;
+        });
+        return { leads, orders };
+    }
+
+    function parseRecordDate(record) {
+        if (!record || !record.year || !record.month || !record.day) return null;
+        return new Date(record.year, record.month - 1, record.day, 0, 0, 0, 0);
+    }
+
+    function startOfWeekMonday(date) {
+        const copy = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const day = copy.getDay();
+        const diff = day === 0 ? -6 : 1 - day;
+        copy.setDate(copy.getDate() + diff);
+        copy.setHours(0, 0, 0, 0);
+        return copy;
+    }
+
+    function sumRevenueByWeek(orders, weekStart) {
+        const values = Array(7).fill(0);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekStart.getDate() + 7);
+
+        for (const order of orders) {
+            const date = parseRecordDate(order);
+            if (!date) continue;
+            if (date < weekStart || date >= weekEnd) continue;
+            const index = Math.floor((date - weekStart) / (24 * 60 * 60 * 1000));
+            if (index >= 0 && index <= 6) {
+                values[index] += Number(order.revenue || 0);
+            }
+        }
+        return values;
+    }
+
+    function getWeeklyRevenueSeries(allYearOrders, month, day) {
+        const datedOrders = allYearOrders
+            .map((order) => ({ ...order, date: parseRecordDate(order) }))
+            .filter((order) => order.date);
+
+        let anchorDate = null;
+        if (month !== 'all' && day !== 'all') {
+            const selectedYear = allYearOrders[0]?.year || new Date().getFullYear();
+            anchorDate = new Date(selectedYear, Number(month) - 1, Number(day), 0, 0, 0, 0);
+        } else if (datedOrders.length > 0) {
+            anchorDate = new Date(Math.max(...datedOrders.map((item) => item.date.getTime())));
+        } else {
+            anchorDate = new Date();
+        }
+
+        const thisWeekStart = startOfWeekMonday(anchorDate);
+        const prevWeekStart = new Date(thisWeekStart);
+        prevWeekStart.setDate(thisWeekStart.getDate() - 7);
+
+        return {
+            labels: ['T2', 'T3', 'T4', 'T5', 'T6', 'T7', 'CN'],
+            thisWeek: sumRevenueByWeek(allYearOrders, thisWeekStart),
+            prevWeek: sumRevenueByWeek(allYearOrders, prevWeekStart),
+            thisWeekStart,
+            prevWeekStart
+        };
+    }
+
+    function renderWeeklyRevenueChart(canvasEl, captionEl, chartRef, allYearOrders, month, day) {
+        if (!canvasEl || typeof Chart === 'undefined') return chartRef;
+
+        const series = getWeeklyRevenueSeries(allYearOrders, month, day);
+        const thisWeekEnd = new Date(series.thisWeekStart);
+        thisWeekEnd.setDate(series.thisWeekStart.getDate() + 6);
+        const prevWeekEnd = new Date(series.prevWeekStart);
+        prevWeekEnd.setDate(series.prevWeekStart.getDate() + 6);
+
+        const toLabel = (date) => `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}`;
+        if (captionEl) {
+            captionEl.innerText = `Tuần đang xem (${toLabel(series.thisWeekStart)}-${toLabel(thisWeekEnd)}) vs Tuần liền trước (${toLabel(series.prevWeekStart)}-${toLabel(prevWeekEnd)})`;
+        }
+
+        if (chartRef) {
+            chartRef.data.labels = series.labels;
+            chartRef.data.datasets[0].data = series.thisWeek;
+            chartRef.data.datasets[1].data = series.prevWeek;
+            chartRef.update();
+            return chartRef;
+        }
+
+        return new Chart(canvasEl, {
+            type: 'bar',
+            data: {
+                labels: series.labels,
+                datasets: [
+                    {
+                        label: 'Tuần đang xem',
+                        data: series.thisWeek,
+                        backgroundColor: '#003d9b',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.6
+                    },
+                    {
+                        label: 'Tuần liền trước',
+                        data: series.prevWeek,
+                        backgroundColor: '#d1d5db',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                        categoryPercentage: 0.6
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#e5e7eb'
+                        },
+                        ticks: {
+                            callback: (value) => `${Math.round(Number(value) / 1000000)}M`
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: (context) => `${context.dataset.label}: ${Number(context.raw || 0).toLocaleString('vi-VN')}đ`
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    if (typeof GETFLY_DATA !== 'undefined') {
+        const moneyFmt = new Intl.NumberFormat('vi-VN');
+        const filterYearEl = document.getElementById('filter-year');
+        const filterMonthEl = document.getElementById('filter-month');
+        const filterDayEl = document.getElementById('filter-day');
+        const leadEl = document.getElementById('val-totalLeads');
+        const revEl = document.getElementById('val-totalRevenue');
+        const conversionEl = document.getElementById('val-conversionRate');
+        const recentOrdersEl = document.getElementById('recent-orders-list');
+        const weeklyRevenueChartEl = document.getElementById('weekly-revenue-chart-canvas');
+        const weeklyRevenueCaptionEl = document.getElementById('weekly-revenue-caption');
+        let weeklyRevenueChart = null;
+
+        const years = Object.keys(GETFLY_REPORT.years).sort((a, b) => Number(b) - Number(a));
+        filterYearEl.innerHTML = years.map((year) => `<option value="${year}">Năm ${year}</option>`).join('');
+        filterMonthEl.innerHTML = '<option value="all">Tất cả tháng</option>' + Array.from({ length: 12 }, (_, idx) => `<option value="${idx + 1}">Tháng ${idx + 1}</option>`).join('');
+        filterDayEl.innerHTML = '<option value="all">Tất cả ngày</option>' + Array.from({ length: 31 }, (_, idx) => `<option value="${idx + 1}">Ngày ${idx + 1}</option>`).join('');
+
+        filterYearEl.value = String(GETFLY_REPORT.current.year);
+        filterMonthEl.value = String(GETFLY_REPORT.current.month);
+        filterDayEl.value = 'all';
+
+        function renderDashboard() {
+            const selectedYear = filterYearEl.value;
+            const selectedMonth = filterMonthEl.value;
+            const selectedDay = filterDayEl.value;
+            const { leads, orders } = getFilteredRecords(GETFLY_REPORT, selectedYear, selectedMonth, selectedDay);
+            const allYearOrders = GETFLY_REPORT.years[String(selectedYear)]?.records?.orders || [];
+
+            const totalLeads = leads.length;
+            const totalRevenue = orders.reduce((sum, order) => sum + Number(order.revenue || 0), 0);
+            const ordersCompleted = orders.filter((order) => String(order.status || '').toLowerCase().includes('đã duyệt')).length;
+            const conversionRate = totalLeads > 0 ? ((ordersCompleted / totalLeads) * 100) : 0;
+
+            if (leadEl) leadEl.innerText = totalLeads.toLocaleString();
+            if (revEl) revEl.innerText = formatMoneyShort(totalRevenue);
+            if (conversionEl) conversionEl.innerText = `${conversionRate.toFixed(1)}%`;
+            weeklyRevenueChart = renderWeeklyRevenueChart(
+                weeklyRevenueChartEl,
+                weeklyRevenueCaptionEl,
+                weeklyRevenueChart,
+                allYearOrders,
+                selectedMonth,
+                selectedDay
+            );
+
+            const recentOrders = [...orders].sort((a, b) => toDateKey(b) - toDateKey(a)).slice(0, 3);
+            if (recentOrders.length === 0) {
+                recentOrdersEl.innerHTML = `
+                    <div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-50 rounded-full flex items-center justify-center text-primary"><span class="material-symbols-outlined">history</span></div>
+                            <div><p class="text-sm font-semibold text-on-surface">Chưa có đơn hàng</p><p class="text-xs text-outline">Dữ liệu sẽ cập nhật khi có báo cáo</p></div>
+                        </div>
+                        <div class="text-right"><p class="text-sm font-bold text-primary">0 đ</p><p class="text-[10px] text-outline">-</p></div>
+                    </div>
+                `;
+            } else {
+                recentOrdersEl.innerHTML = recentOrders.map((order, index) => {
+                    const iconBg = index % 2 === 0 ? 'bg-secondary/10 text-secondary' : 'bg-blue-50 text-primary';
+                    return `
+                        <div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 ${iconBg} rounded-full flex items-center justify-center"><span class="material-symbols-outlined">shopping_cart</span></div>
+                                <div>
+                                    <p class="text-sm font-semibold text-on-surface">Khách hàng: ${order.customer}</p>
+                                    <p class="text-xs text-outline">${order.code} • ${order.status}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-sm font-bold text-primary">${moneyFmt.format(order.revenue || 0)}đ</p>
+                                <p class="text-[10px] text-outline">${order.createdAt || '-'}</p>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        filterYearEl.addEventListener('change', renderDashboard);
+        filterMonthEl.addEventListener('change', renderDashboard);
+        filterDayEl.addEventListener('change', renderDashboard);
+        renderDashboard();
+    }
+</script>
+</body></html>
