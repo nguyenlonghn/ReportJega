@@ -82,6 +82,40 @@ function parseCsvFile(filePath) {
     });
 }
 
+function normalizeForMatch(value) {
+    return String(value || '')
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]/g, '');
+}
+
+function findCsvFileByPattern(dirPath, matcher) {
+    if (!fs.existsSync(dirPath)) return null;
+
+    const fileName = fs.readdirSync(dirPath)
+        .filter((name) => /\.csv$/i.test(name))
+        .find((name) => matcher(normalizeForMatch(name), name));
+
+    return fileName ? path.join(dirPath, fileName) : null;
+}
+
+function resolveReportCsvPaths(monthPath) {
+    const dskhPath =
+        findCsvFileByPattern(monthPath, (normalized) => normalized.includes('danhsachkhachhang')) ||
+        findCsvFileByPattern(monthPath, (normalized) => normalized.includes('danhsach') && normalized.includes('khachhang')) ||
+        findCsvFileByPattern(monthPath, (normalized) => normalized === 'dskhcsv' || normalized === 'dskh') ||
+        path.join(monthPath, 'dskh.csv');
+
+    const dbhPath =
+        findCsvFileByPattern(monthPath, (normalized) => normalized.includes('donhangban')) ||
+        findCsvFileByPattern(monthPath, (normalized) => normalized.includes('donhang') && normalized.includes('ban')) ||
+        findCsvFileByPattern(monthPath, (normalized) => normalized === 'dbhcsv' || normalized === 'dbh') ||
+        path.join(monthPath, 'dbh.csv');
+
+    return { dskhPath, dbhPath };
+}
+
 function getNumericFolderNames(dirPath) {
     if (!fs.existsSync(dirPath)) return [];
 
@@ -114,11 +148,7 @@ function getInitials(name) {
     return `${parts[0][0]}${parts[parts.length - 1][0]}`.toUpperCase();
 }
 
-function buildMonthMetrics(year, month) {
-    const monthPath = path.join(REPORT_ROOT, String(year), String(month));
-    const dskhRows = parseCsvFile(path.join(monthPath, 'dskh.csv'));
-    const dbhRows = parseCsvFile(path.join(monthPath, 'dbh.csv'));
-
+function buildMonthMetricsFromRows(year, month, dskhRows, dbhRows) {
     const leadRowsInMonth = dskhRows.filter((row) => {
         const createdAt = parseViDate(row['Ngày tạo']);
         return createdAt && createdAt.year === year && createdAt.month === month;
@@ -266,6 +296,14 @@ function buildMonthMetrics(year, month) {
     };
 }
 
+function buildMonthMetrics(year, month) {
+    const monthPath = path.join(REPORT_ROOT, String(year), String(month));
+    const { dskhPath, dbhPath } = resolveReportCsvPaths(monthPath);
+    const dskhRows = parseCsvFile(dskhPath);
+    const dbhRows = parseCsvFile(dbhPath);
+    return buildMonthMetricsFromRows(year, month, dskhRows, dbhRows);
+}
+
 function buildReportData() {
     const years = getNumericFolderNames(REPORT_ROOT);
     const result = {
@@ -274,15 +312,26 @@ function buildReportData() {
     };
 
     for (const year of years) {
+        const yearPath = path.join(REPORT_ROOT, String(year));
         const monthFolders = new Set(getNumericFolderNames(path.join(REPORT_ROOT, String(year))));
+        const { dskhPath: yearDskhPath, dbhPath: yearDbhPath } = resolveReportCsvPaths(yearPath);
+        const yearDskhRows = parseCsvFile(yearDskhPath);
+        const yearDbhRows = parseCsvFile(yearDbhPath);
+        const hasYearLevelCsv = yearDskhRows.length > 0 || yearDbhRows.length > 0;
+
         const months = {};
         const yearLeadRecords = [];
         const yearOrderRecords = [];
 
         for (let month = 1; month <= 12; month += 1) {
-            months[String(month)] = monthFolders.has(month)
-                ? buildMonthMetrics(year, month)
-                : cloneDefaultMonthData();
+            if (hasYearLevelCsv) {
+                // Prefer one-file-per-year model and slice by month using Ngay tao.
+                months[String(month)] = buildMonthMetricsFromRows(year, month, yearDskhRows, yearDbhRows);
+            } else {
+                months[String(month)] = monthFolders.has(month)
+                    ? buildMonthMetrics(year, month)
+                    : cloneDefaultMonthData();
+            }
         }
 
         const monthly = Array.from({ length: 12 }, (_, index) => {
@@ -360,18 +409,9 @@ function buildReportData() {
 function writeReportArtifacts() {
     const reportData = buildReportData();
     const jsonPath = path.join(__dirname, 'report-data.json');
-    const dataJsPath = path.join(__dirname, 'data.js');
 
-    fs.writeFileSync(jsonPath, JSON.stringify(reportData, null, 2), 'utf8');
-
-    const jsContent = [
-        `const GETFLY_REPORT = ${JSON.stringify(reportData, null, 2)};`,
-        'const GETFLY_DATA = GETFLY_REPORT.current.metrics;',
-        'const GETFLY_MONTHLY = (GETFLY_REPORT.years[String(GETFLY_REPORT.current.year)] || { monthly: [] }).monthly;',
-        'const GETFLY_CURRENT_MONTH = GETFLY_REPORT.current.monthData || {};' 
-    ].join('\n\n');
-
-    fs.writeFileSync(dataJsPath, jsContent, 'utf8');
+    const reportJsonContent = JSON.stringify(reportData, null, 2);
+    fs.writeFileSync(jsonPath, reportJsonContent, 'utf8');
     return reportData;
 }
 

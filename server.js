@@ -104,10 +104,6 @@ app.post('/api/sync', async (req, res) => {
         });
 
         console.log('[SYNC] Thành công!', scrapedData);
-        
-        // Cập nhật lại một file data.js giả định để các trang tĩnh dễ nhận diện
-        const dataScript = `const GETFLY_DATA = ${JSON.stringify(scrapedData)};`;
-        fs.writeFileSync('data.js', dataScript);
 
         res.json({ success: true, data: scrapedData });
 
@@ -123,9 +119,9 @@ const PORT = 3001;
 
 try {
     writeReportArtifacts();
-    console.log('[REPORT] Da tai tao data.js tu folder Report.');
+    console.log('[REPORT] Da tai tao report-data.json tu folder Report.');
 } catch (error) {
-    console.error('[REPORT] Khong the tao data.js:', error.message);
+    console.error('[REPORT] Khong the tao report-data.json:', error.message);
 }
 
 app.listen(PORT, () => {

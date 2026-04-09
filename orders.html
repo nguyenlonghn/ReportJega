@@ -72,8 +72,15 @@ h1, h2, h3 { font-family: 'Manrope', sans-serif; }
 <a href="performance.html" class="flex flex-col items-center justify-center text-slate-400 px-3 py-1 hover:text-blue-600 transition-all"><span class="material-symbols-outlined">analytics</span><span class="font-inter text-[10px] font-medium tracking-tight">Performance</span></a>
 <a href="orders.html" class="flex flex-col items-center justify-center bg-blue-50 text-blue-700 rounded-xl px-3 py-1"><span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span><span class="font-inter text-[10px] font-medium tracking-tight">Orders</span></a>
 </nav>
-<script src="data.js"></script>
 <script>
+	async function loadReportData() {
+		const response = await fetch('report-data.json', { cache: 'no-store' });
+		if (!response.ok) {
+			throw new Error(`Khong the tai report-data.json (${response.status})`);
+		}
+		return response.json();
+	}
+
 	function getFilteredOrderRecords(report, year, month, day) {
 		const records = report.years[String(year)]?.records?.orders || [];
 		return records.filter((item) => {
@@ -87,7 +94,9 @@ h1, h2, h3 { font-family: 'Manrope', sans-serif; }
 		return (record.year || 0) * 10000 + (record.month || 0) * 100 + (record.day || 0);
 	}
 
-	if (typeof GETFLY_DATA !== 'undefined') {
+	(async () => {
+		const GETFLY_REPORT = await loadReportData();
+		const GETFLY_DATA = GETFLY_REPORT.current?.metrics || {};
 		const moneyFmt = new Intl.NumberFormat('vi-VN');
 		const filterYearEl = document.getElementById('filter-year');
 		const filterMonthEl = document.getElementById('filter-month');
@@ -160,6 +169,8 @@ h1, h2, h3 { font-family: 'Manrope', sans-serif; }
 		filterMonthEl.addEventListener('change', renderOrders);
 		filterDayEl.addEventListener('change', renderOrders);
 		renderOrders();
-	}
+	})().catch((error) => {
+		console.error('[ORDERS LOAD ERROR]', error.message);
+	});
 </script>
 </body></html>

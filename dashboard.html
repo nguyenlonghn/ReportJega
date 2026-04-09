@@ -127,8 +127,15 @@
 </a>
 </nav>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script src="data.js"></script>
 <script>
+    async function loadReportData() {
+        const response = await fetch('report-data.json', { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error(`Khong the tai report-data.json (${response.status})`);
+        }
+        return response.json();
+    }
+
     function toDateKey(record) {
         return (record.year || 0) * 10000 + (record.month || 0) * 100 + (record.day || 0);
     }
@@ -293,7 +300,9 @@
         });
     }
 
-    if (typeof GETFLY_DATA !== 'undefined') {
+    (async () => {
+        const GETFLY_REPORT = await loadReportData();
+        const GETFLY_DATA = GETFLY_REPORT.current?.metrics || {};
         const moneyFmt = new Intl.NumberFormat('vi-VN');
         const filterYearEl = document.getElementById('filter-year');
         const filterMonthEl = document.getElementById('filter-month');
@@ -376,6 +385,8 @@
         filterMonthEl.addEventListener('change', renderDashboard);
         filterDayEl.addEventListener('change', renderDashboard);
         renderDashboard();
-    }
+    })().catch((error) => {
+        console.error('[DASHBOARD LOAD ERROR]', error.message);
+    });
 </script>
 </body></html>
